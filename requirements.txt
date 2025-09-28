@@ -1,0 +1,6 @@
+Flask
+Flask-Mail
+requests
+supabase
+midtransclient
+Werkzeug
