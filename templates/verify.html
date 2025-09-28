@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center" style="background-color:#FFF8F0; min-height:100vh; padding-top:50px;">
+  <div class="col-md-6">
+    <div class="card shadow-sm" style="border-radius:15px; background-color:#D7CCC8; border:none;">
+      <div class="card-body">
+        <h3 class="mb-4 text-center" style="color:#5D4037;">Verifikasi OTP</h3>
+        <form method="POST">
+          <div class="mb-3">
+            <label style="color:#4E342E; font-weight:600;">Kode OTP</label>
+            <input type="text" name="otp" class="form-control" required
+                   style="border-radius:10px; border:1px solid #8D6E63;">
+          </div>
+          <button type="submit" class="btn w-100" 
+                  style="background-color:#8D6E63; color:white; border-radius:10px;">
+            Verifikasi
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+  <h3 class="mb-4" style="color: #5c4033;">Checkout Keranjang</h3>
+
+  <!-- Tabel Keranjang -->
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead style="background-color: #a67b5b; color: white;">
+        <tr>
+          <th>Produk</th>
+          <th>Harga</th>
+          <th>Qty</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.nama }}</td>
+          <td>Rp {{ "{:,.0f}".format(item.harga) }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>Rp {{ "{:,.0f}".format(item.harga * item.quantity) }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="3" class="text-end fw-bold">Grand Total Produk</td>
+          <td class="fw-bold">Rp {{ "{:,.0f}".format(grand_total) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Info Ongkir -->
+  <div class="mb-3">
+    <label class="form-label" style="color: #5c4033;">Ongkos Kirim</label>
+    <input type="text" class="form-control" readonly
+           value="Rp {{ '{:,.0f}'.format(ongkir) }}"
+           style="border-radius: 8px; border: 1px solid #a67b5b;">
+  </div>
+
+  <hr class="my-4">
+
+  <!-- Input Alamat Pengiriman -->
+  <form action="{{ url_for('payment', order_id=order_id) }}" method="POST" class="card shadow-sm p-4">
+    <h5 style="color: #5c4033;">Alamat Pengiriman</h5>
+
+    <div class="row">
+      <div class="col-md-6">
+        <input type="text" name="label" class="form-control mb-2" placeholder="Label (Rumah/Kantor)" required>
+      </div>
+      <div class="col-md-6">
+        <input type="text" name="penerima" class="form-control mb-2" placeholder="Nama Penerima" required>
+      </div>
+    </div>
+
+    <input type="text" name="phone" class="form-control mb-2" placeholder="No. Telepon" required>
+    <input type="text" name="provinsi" class="form-control mb-2" placeholder="Provinsi" required>
+    <input type="text" name="kota" class="form-control mb-2" placeholder="Kota/Kabupaten" required>
+    <input type="text" name="kode_pos" class="form-control mb-2" placeholder="Kode Pos" required>
+
+    <!-- Detail alamat -->
+    <textarea name="alamat" class="form-control mb-3" 
+              placeholder="Alamat Lengkap (contoh: Kelurahan XX, RT/RW XX, Jl. XXXX No. XX)" required></textarea>
+
+    <!-- Tombol Bayar -->
+    <button type="submit"
+       class="btn w-100" 
+       style="background-color: #a67b5b; color: white; border-radius: 8px;">
+      Bayar
+    </button>
+  </form>
+</div>
+{% endblock %}

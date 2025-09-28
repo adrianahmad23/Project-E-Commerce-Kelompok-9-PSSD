@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-4">Edit Produk</h3>
+<form method="POST" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label>Nama Produk</label>
+    <input type="text" name="nama" class="form-control" value="{{ product.nama }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label>Harga</label>
+    <input type="number" name="harga" class="form-control" value="{{ product.harga }}" min="0" required>
+  </div>
+
+  <div class="mb-3">
+    <label>Stok</label>
+    <input type="number" name="stok" class="form-control" value="{{ product.stok }}" min="0" required>
+  </div>
+
+  <div class="mb-3">
+    <label>Rating</label>
+    <input type="number" name="rating" class="form-control" step="0.1" value="{{ product.rating }}" min="0" max="5">
+  </div>
+
+  <div class="mb-3">
+    <label>Deskripsi</label>
+    <textarea name="deskripsi" class="form-control" rows="4" required>{{ product.deskripsi }}</textarea>
+  </div>
+
+  <div class="mb-3">
+    <label>Tag</label>
+    <select name="tag" class="form-control">
+      <option value="unisex" {% if product.tag == 'unisex' %}selected{% endif %}>Unisex</option>
+      <option value="men" {% if product.tag == 'men' %}selected{% endif %}>Men</option>
+      <option value="women" {% if product.tag == 'women' %}selected{% endif %}>Women</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label>Brand</label>
+    <select name="brand" class="form-control">
+      <option value="designer" {% if product.brand == 'designer' %}selected{% endif %}>Designer</option>
+      <option value="niche" {% if product.brand == 'niche' %}selected{% endif %}>Niche</option>
+      <option value="timteng" {% if product.brand == 'timteng' %}selected{% endif %}>Timteng</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label>Gambar Produk (opsional)</label><br>
+    {% if product.gambar %}
+      <div class="mb-2">
+        <img src="{{ url_for('static', filename='uploads/' ~ product.gambar) }}" 
+             alt="gambar" width="150" class="img-thumbnail">
+      </div>
+    {% endif %}
+    <input type="file" name="gambar" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-primary">💾 Simpan Perubahan</button>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">⬅️ Kembali</a>
+</form>
+{% endblock %}

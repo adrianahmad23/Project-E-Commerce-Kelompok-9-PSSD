@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-5">
+  <!-- Gambar produk -->
+  <div class="col-md-6">
+    <img src="{{ url_for('static', filename='images/' + product.gambar) }}" 
+         class="img-fluid rounded shadow-sm">
+  </div>
+
+  <!-- Detail produk -->
+  <div class="col-md-6">
+    <h2 class="fw-bold">{{ product.nama }}</h2>
+    <p class="text-muted fs-4">Rp {{ "{:,.0f}".format(product.harga) }}</p>
+    <p class="text-warning">⭐ {{ product.rating }}</p>
+    <p>{{ product.deskripsi }}</p>
+
+    <!-- Tombol Tambah ke Keranjang -->
+    <a href="{{ url_for('add_to_cart', produk_id=product.id) }}" 
+       class="btn-cart btn-lg">+ Keranjang</a>
+  </div>
+</div>
+
+<!-- Produk lain -->
+<div class="mt-5">
+  <h3 class="fw-bold mb-4">Produk Lainnya</h3>
+  <div class="row row-cols-1 row-cols-md-4 g-4">
+    {% for p in other_products %}
+    <div class="col">
+      <div class="card h-100 text-center shadow-sm border-0">
+        <img src="{{ url_for('static', filename='images/' + p.gambar) }}" 
+             class="card-img-top" alt="{{ p.nama }}" style="height:200px; object-fit:cover;">
+        <div class="card-body">
+          <h5 class="card-title">{{ p.nama }}</h5>
+          <p class="price">Rp {{ "{:,.0f}".format(p.harga) }}</p>
+          <a href="{{ url_for('product_detail', produk_id=p.id) }}" 
+             class="btn-detail w-100 mb-2">Detail</a>
+          <a href="{{ url_for('add_to_cart', produk_id=p.id) }}" 
+             class="btn-cart w-100">+ Keranjang</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

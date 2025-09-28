@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mau Wangi</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Header -->
+  <header class="sticky-top bg-white shadow-sm pb-2">
+    <div class="container py-2">
+      <div class="d-flex align-items-center justify-content-between">
+
+        <!-- Spacer kiri agar balance -->
+        <div class="flex-grow-1" style="max-width:180px;"></div>
+
+        <!-- Logo di tengah -->
+        <div class="text-center">
+          <a href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='images/logo_mw text.png') }}" 
+                 alt="Logo" height="90">
+          </a>
+        </div>
+
+        <!-- Menu kanan -->
+        <div class="d-flex align-items-center justify-content-end flex-grow-1 gap-4" style="max-width:180px;">
+          <!-- Cart -->
+          <a href="{{ url_for('cart') }}" class="text-brown">
+            <i class="bi bi-bag" style="font-size: 1.5rem;"></i>
+          </a>
+
+          <!-- User Dropdown -->
+          <div class="dropdown">
+            {% if session.get("user_name") %}
+              <a href="#" class="text-decoration-none dropdown-toggle text-brown fw-semibold" 
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                Hi, {{ session["user_name"] }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                {% if session.get("role") == "admin" %}
+                  <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('chart') }}">Chart</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                {% endif %}
+                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+              </ul>
+            {% else %}
+              <div class="d-flex gap-3">
+                <a href="{{ url_for('login') }}" class="text-decoration-none text-brown fw-semibold">
+                  Login
+                </a>
+                <a href="{{ url_for('register') }}" class="text-decoration-none text-brown fw-semibold">
+                  Sign Up
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submenu kategori -->
+    <div class="border-top mt-2">
+      <div class="container d-flex justify-content-center gap-5 py-3" style="margin-top: 12px;">
+        <a href="{{ url_for('index', search='', tag='men', brand='', harga_min='', harga_max='') }}" 
+           class="nav-link fw-bold" style="font-size: 1.2rem; color: #6F4E37;">Men</a>
+        <a href="{{ url_for('index', search='', tag='women', brand='', harga_min='', harga_max='') }}" 
+           class="nav-link fw-bold" style="font-size: 1.2rem; color: #6F4E37;">Women</a>
+        <a href="{{ url_for('index', search='', tag='unisex', brand='', harga_min='', harga_max='') }}" 
+           class="nav-link fw-bold" style="font-size: 1.2rem; color: #6F4E37;">Unisex</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="py-4">
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color: #805921;" class="text-white text-center py-3 mt-5">
+    <p class="mb-0">© 2025 Mau Wangi. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

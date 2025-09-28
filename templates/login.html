@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm" style="border-radius: 12px; background-color: #fdf8f5;">
+      <div class="card-body">
+        <h3 class="mb-4 text-center" style="color: #5c4033;">Login</h3>
+
+        {# Flash message muncul di sini, tepat di atas form #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert" 
+                   style="border-radius: 8px; background-color: {% if category == 'danger' %}#f8d7da{% elif category == 'success' %}#d1e7dd{% else %}#fff3cd{% endif %}; color: #5c4033;">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+          <div class="mb-3">
+            <label style="color: #5c4033;">Email</label>
+            <input type="email" name="email" class="form-control" required style="border-radius: 8px;">
+          </div>
+          <div class="mb-3">
+            <label style="color: #5c4033;">Password</label>
+            <input type="password" name="password" class="form-control" required style="border-radius: 8px;">
+          </div>
+          <button type="submit" class="btn w-100" 
+                  style="background-color: #a67b5b; color: white; border-radius: 8px;">
+            Login
+          </button>
+        </form>
+
+        <div class="text-center mt-3">
+          <small style="color: #5c4033;">
+            Belum punya akun? 
+            <a href="{{ url_for('register') }}" style="color: #a67b5b; font-weight: 600; text-decoration: none;">
+              Daftar di sini
+            </a>
+          </small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

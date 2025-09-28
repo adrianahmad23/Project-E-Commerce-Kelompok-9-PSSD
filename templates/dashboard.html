@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="fw-bold mb-4">Dashboard Admin</h2>
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm dashboard-card">
+      <div class="card-body">
+        <h5>Pesanan</h5>
+        <p class="fs-4 fw-bold">{{ total_orders }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm dashboard-card">
+      <div class="card-body">
+        <h5>Stok Produk</h5>
+        <p class="fs-4 fw-bold">{{ total_stock }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm dashboard-card">
+      <div class="card-body">
+        <h5>Pengguna</h5>
+        <p class="fs-4 fw-bold">{{ total_users }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="{{ url_for('add_product') }}" class="btn btn-primary mb-3">Tambah Produk</a>
+<a href="{{ url_for('chart') }}" class="btn btn-outline-primary mb-3">Lihat Grafik</a>
+
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>Nama Produk</th>
+      <th>Harga</th>
+      <th>Deskripsi</th>
+      <th>Stok</th>
+      <th>Rating</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in products %}
+    <tr>
+      <td>{{ p.nama }}</td>
+      <td>Rp {{ "{:,.0f}".format(p.harga) }}</td>
+      <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" 
+          title="{{ p.deskripsi }}">
+        {{ p.deskripsi }}
+      </td>
+      <td>{{ p.stok }}</td>
+      <td>
+        {% if p.rating == 0 %}
+          <span class="text-muted">Belum Terjual</span>
+        {% else %}
+          ⭐ {{ p.rating }}
+        {% endif %}
+      </td>
+      <td>
+        <a href="{{ url_for('edit_product', produk_id=p.id) }}" class="btn btn-sm btn-warning me-1">✏️ Edit</a>
+        <form action="{{ url_for('delete_product', produk_id=p.id) }}" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus produk ini?')">Hapus</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

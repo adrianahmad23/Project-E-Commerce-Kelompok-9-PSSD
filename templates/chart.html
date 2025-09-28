@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-4">Grafik Data</h3>
+<div class="card shadow-sm p-4" style="height: 400px;">
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Ambil data dari Flask dan pastikan jadi JSON string valid
+  const labels = JSON.parse('{{ labels | tojson | safe }}');
+  const dataValues = JSON.parse('{{ data | tojson | safe }}');
+
+  const ctx = document.getElementById('myChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Jumlah Stok',
+        data: dataValues,
+        backgroundColor: 'rgba(108, 99, 255, 0.6)',
+        borderColor: 'rgba(108, 99, 255, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

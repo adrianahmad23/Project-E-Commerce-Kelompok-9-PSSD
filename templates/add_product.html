@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+  <h3 class="mb-4">Tambah Produk</h3>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+
+        <!-- Nama Produk -->
+        <div class="mb-3">
+          <label class="form-label">Nama Produk</label>
+          <input type="text" name="nama" class="form-control" placeholder="Masukkan nama produk" required>
+        </div>
+
+        <!-- Harga -->
+        <div class="mb-3">
+          <label class="form-label">Harga</label>
+          <input type="number" name="harga" class="form-control" placeholder="Contoh: 150000" required>
+        </div>
+
+        <!-- Stok -->
+        <div class="mb-3">
+          <label class="form-label">Stok</label>
+          <input type="number" name="stok" class="form-control" placeholder="Jumlah stok tersedia" required>
+        </div>
+
+        <!-- Rating -->
+        <div class="mb-3">
+          <label class="form-label">Rating</label>
+          <input type="number" name="rating" class="form-control" step="0.1" placeholder="Nol jika belum ada ulasan">
+        </div>
+
+        <!-- Tag -->
+        <div class="mb-3">
+          <label class="form-label">Tag</label>
+          <select name="tag" class="form-select" required>
+            <option value="unisex">Unisex</option>
+            <option value="men">Men</option>
+            <option value="women">Women</option>
+          </select>
+        </div>
+
+        <!-- Brand -->
+        <div class="mb-3">
+          <label class="form-label">Brand</label>
+          <select name="brand" class="form-select" required>
+            <option value="designer">Designer</option>
+            <option value="niche">Niche</option>
+            <option value="timteng">Timteng</option>
+          </select>
+        </div>
+
+        <!-- Deskripsi -->
+        <div class="mb-3">
+          <label class="form-label">Deskripsi</label>
+          <textarea name="deskripsi" class="form-control" rows="4" placeholder="Tuliskan detail produk..." required></textarea>
+        </div>
+
+        <!-- Gambar -->
+        <div class="mb-3">
+          <label class="form-label">Gambar Produk</label>
+          <input type="file" name="gambar" class="form-control" accept="image/*" required>
+          <div class="form-text">Format: JPG, PNG, atau WEBP</div>
+        </div>
+
+        <!-- Tombol -->
+        <button type="submit" class="btn btn-primary w-100">Tambah Produk</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

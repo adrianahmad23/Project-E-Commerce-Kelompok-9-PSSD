@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-4">Pembayaran</h3>
+<div class="card shadow-sm">
+  <div class="card-body">
+
+    {% if order and items %}
+    <!-- Ringkasan Pesanan -->
+    <h4>Ringkasan Pesanan</h4>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Produk</th>
+          <th>Brand</th>
+          <th>Tag</th>
+          <th>Harga</th>
+          <th>Qty</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.nama }}</td>
+          <td>{{ item.brand }}</td>
+          <td>{{ item.tag }}</td>
+          <td>Rp {{ "{:,.0f}".format(item.harga) }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>Rp {{ "{:,.0f}".format(item.total_price) }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="5" class="text-end fw-bold">Ongkos Kirim</td>
+          <td>Rp {{ "{:,.0f}".format(order.ongkir or 0) }}</td>
+        </tr>
+        <tr>
+          <td colspan="5" class="text-end fw-bold">Total Bayar</td>
+          <td class="fw-bold">Rp {{ "{:,.0f}".format(final_total) }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Info Pengiriman -->
+    <h5 class="mt-4">Detail Pengiriman</h5>
+    {% if address %}
+    <p>
+      <strong>Penerima:</strong> {{ address.penerima }} <br>
+      <strong>No. HP:</strong> {{ address.phone }} <br>
+      <strong>Alamat:</strong> {{ address.alamat }}, {{ address.kota }}, {{ address.provinsi }} - {{ address.kode_pos }}
+    </p>
+    {% else %}
+    <p class="text-danger">Alamat pengiriman belum tersedia. Silakan tambahkan alamat terlebih dahulu.</p>
+    {% endif %}
+
+    <!-- Tombol Konfirmasi Pembayaran -->
+    <div class="mt-4 text-center">
+      <form method="POST" action="{{ url_for('payment', order_id=order.id) }}">
+        {% if csrf_token %} <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> {% endif %}
+        <input type="hidden" name="confirm_payment" value="1">
+        <button type="submit" class="btn btn-success w-100">Konfirmasi Pembayaran</button>
+      </form>
+    </div>
+
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

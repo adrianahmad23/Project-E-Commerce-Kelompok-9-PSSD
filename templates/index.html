@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="fw-bold mb-4">Daftar Produk</h2>
+
+<div class="row">
+  <!-- Sidebar Filter -->
+  <div class="col-md-3">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Filter</h5>
+        <form method="get" action="{{ url_for('index') }}" class="d-flex flex-column gap-3">
+
+          <!-- Search -->
+          <div>
+            <label class="form-label">Cari Produk</label>
+            <input type="text" class="form-control" name="search"
+                   placeholder="Cari produk..." value="{{ search }}">
+          </div>
+
+          <!-- Tag -->
+          <div>
+            <label class="form-label">Tag</label>
+            <select class="form-select" name="tag">
+              <option value="">Semua</option>
+              <option value="unisex" {% if tag=="unisex" %}selected{% endif %}>Unisex</option>
+              <option value="men" {% if tag=="men" %}selected{% endif %}>Men</option>
+              <option value="women" {% if tag=="women" %}selected{% endif %}>Women</option>
+            </select>
+          </div>
+
+          <!-- Brand -->
+          <div>
+            <label class="form-label">Brand</label>
+            <select class="form-select" name="brand">
+              <option value="">Semua</option>
+              <option value="designer" {% if brand=="designer" %}selected{% endif %}>Designer</option>
+              <option value="niche" {% if brand=="niche" %}selected{% endif %}>Niche</option>
+              <option value="timteng" {% if brand=="timteng" %}selected{% endif %}>Timteng</option>
+            </select>
+          </div>
+
+          <!-- Harga -->
+          <div>
+            <label class="form-label">Harga Minimum</label>
+            <input type="number" class="form-control" name="harga_min" value="{{ harga_min }}">
+          </div>
+          <div>
+            <label class="form-label">Harga Maksimum</label>
+            <input type="number" class="form-control" name="harga_max" value="{{ harga_max }}">
+          </div>
+
+          <!-- Tombol -->
+          <button type="submit" class="btn btn-primary w-100">Terapkan</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Produk -->
+  <div class="col-md-9">
+    <div class="row g-4">
+      {% for product in products %}
+      <div class="col-md-4">
+        <div class="card mb-4 h-100 shadow-sm">
+          <img src="{{ url_for('static', filename='images/' + (product.gambar or 'default.png')) }}" 
+               class="card-img-top" alt="{{ product.nama }}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ product.nama }}</h5>
+            <p class="card-text">Rp {{ "{:,.0f}".format(product.harga) }}</p>
+            <p class="text-muted small">{{ product.tag|capitalize }} | {{ product.brand|capitalize }}</p>
+            <p class="text-warning">⭐ {{ product.rating }}</p>
+            <div class="mt-auto">
+              <a href="{{ url_for('product_detail', produk_id=product.id) }}" class="btn-detail w-100 mb-2">Detail</a>
+              <a href="{{ url_for('add_to_cart', produk_id=product.id) }}" class="btn-cart w-100">+ Keranjang</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

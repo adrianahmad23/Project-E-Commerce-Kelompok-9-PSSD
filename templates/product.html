@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Katalog Produk</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .page-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            height: fit-content;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .sidebar form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .sidebar label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .sidebar input, .sidebar select, .sidebar button {
+            padding: 6px;
+            font-size: 14px;
+        }
+        .sidebar button {
+            background: #007bff;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .sidebar button:hover {
+            background: #0056b3;
+        }
+        .product-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #b8a97a;
+            padding: 10px;
+            border-radius: 8px;
+            background: #b8a97a;
+            text-align: center;
+        }
+        .product-card img {
+            max-width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .price {
+            font-weight: bold;
+            color: #ccc;
+        }
+        header {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Katalog Parfum</h2>
+    </header>
+
+    <div class="page-container">
+        <!-- Sidebar Filter -->
+        <aside class="sidebar">
+            <h3>Filter</h3>
+            <form method="get">
+                <!-- Search -->
+                <div>
+                    <label>Cari</label>
+                    <input type="text" name="search" value="{{ request.args.get('search','') }}" placeholder="Nama parfum...">
+                </div>
+
+                <!-- Tag -->
+                <div>
+                    <label>Kategori</label>
+                    <select name="tag">
+                        <option value="">Semua</option>
+                        <option value="men" {% if request.args.get('tag')=='men' %}selected{% endif %}>Men</option>
+                        <option value="women" {% if request.args.get('tag')=='women' %}selected{% endif %}>Women</option>
+                        <option value="unisex" {% if request.args.get('tag')=='unisex' %}selected{% endif %}>Unisex</option>
+                    </select>
+                </div>
+
+                <!-- Brand -->
+                <div>
+                    <label>Brand</label>
+                    <select name="brand">
+                        <option value="">Semua</option>
+                        <option value="designer" {% if request.args.get('brand')=='designer' %}selected{% endif %}>Designer</option>
+                        <option value="niche" {% if request.args.get('brand')=='niche' %}selected{% endif %}>Niche</option>
+                        <option value="timteng" {% if request.args.get('brand')=='timteng' %}selected{% endif %}>Timteng</option>
+                    </select>
+                </div>
+
+                <!-- Harga -->
+                <div>
+                    <label>Harga</label>
+                    <input type="number" name="min_price" placeholder="Min"
+                           value="{{ request.args.get('min_price','') }}">
+                    <input type="number" name="max_price" placeholder="Max"
+                           value="{{ request.args.get('max_price','') }}">
+                </div>
+
+                <!-- Sort -->
+                <div>
+                    <label>Urutkan</label>
+                    <select name="sort">
+                        <option value="">Default</option>
+                        <option value="cheap" {% if request.args.get('sort')=='cheap' %}selected{% endif %}>Termurah</option>
+                        <option value="expensive" {% if request.args.get('sort')=='expensive' %}selected{% endif %}>Termahal</option>
+                    </select>
+                </div>
+
+                <button type="submit" 
+                        style="background-color: #5C4033; color: #fff; border: none; padding: 8px 20px; border-radius: 6px;">
+                    Terapkan
+                </button>
+
+            </form>
+        </aside>
+
+        <!-- Produk -->
+        <div class="product-container">
+            {% for p in products %}
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='image/' + p.gambar) }}" alt="{{ p.name }}">
+                <h3>{{ p.nama }}</h3>
+                <p>{{ p.deskripsi }}</p>
+                <p>⭐ {{ p.rating}}</p>
+                <p class="price">Rp {{ "{:,.0f}".format(p.harga) }}</p>
+                <a href="/payment/{{ p.id }}" class="btn">Beli</a>
+            </div>
+            {% else %}
+            <p>Tidak ada produk ditemukan</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
