@@ -404,42 +404,50 @@ def logout():
 @app.route("/admin/dashboard")
 @admin_required
 def dashboard():
-    # compute totals in Python (safe & consistent)
+    # Hitung total pesanan
     orders_all = fetch_all(supabase.table("orders").select("id"))
-    total_orders = len(orders_all) if orders_all is not None else 0
+    total_orders = len(orders_all) if orders_all else 0
 
+    # Hitung total stok
     products_all = fetch_all(supabase.table("products").select("stok"))
-    total_stock = sum([p.get("stok", 0) for p in (products_all or [])])
+    total_stock = sum([p.get("stok") or 0 for p in (products_all or [])])
 
+    # Hitung total pengguna
     users_all = fetch_all(supabase.table("users").select("id"))
-    total_users = len(users_all) if users_all is not None else 0
+    total_users = len(users_all) if users_all else 0
 
-    # product list
+    # Ambil daftar produk, normalisasi nilai None untuk integer
     products = fetch_all(supabase.table("products").select("id,nama,harga,stok,rating").order("id", desc=True))
+    for p in products or []:
+        p["harga"] = p.get("harga") or 0
+        p["stok"] = p.get("stok") or 0
+        p["rating"] = p.get("rating") or 0
 
-    # recent orders: fetch last 20 orders, then attach user & product names
+    # Ambil 20 pesanan terbaru
     orders_raw = fetch_all(supabase.table("orders").select("*").order("tanggal", desc=True).limit(20))
     orders = []
     if orders_raw:
         for o in orders_raw:
-            # fetch user and product for display (if available)
+            # Ambil nama user dan produk jika ada
             user = fetch_one(supabase.table("users").select("nama").eq("id", o.get("user_id")))
             product = fetch_one(supabase.table("products").select("nama").eq("id", o.get("produk_id")))
             orders.append({
                 "id": o.get("id"),
-                "qty": o.get("quantity"),
-                "status": o.get("status"),
-                "tanggal": o.get("tanggal"),
-                "user_nama": user.get("nama") if user else None,
-                "produk_nama": product.get("nama") if product else None,
+                "qty": o.get("quantity") or 0,
+                "status": o.get("status") or "",
+                "tanggal": o.get("tanggal") or "",
+                "user_nama": user.get("nama") if user else "",
+                "produk_nama": product.get("nama") if product else "",
             })
 
-    return render_template("dashboard.html",
-                           total_orders=total_orders,
-                           total_stock=total_stock,
-                           total_users=total_users,
-                           products=products,
-                           orders=orders)
+    return render_template(
+        "dashboard.html",
+        total_orders=total_orders,
+        total_stock=total_stock,
+        total_users=total_users,
+        products=products,
+        orders=orders
+    )
 
 @app.route("/admin/add_product", methods=["GET", "POST"])
 @admin_required
@@ -704,12 +712,14 @@ def checkout_cart():
                 flash("Silakan pilih alamat pengiriman terlebih dahulu.", "danger")
                 return redirect(url_for("checkout_cart"))
 
-            # 1️⃣ Buat orders (header) → isi produk_id & quantity dari item pertama
-            first_item = items[0] if items else None
+            # hitung total quantity dari semua item di cart
+            total_quantity = sum(item["quantity"] for item in items)
+
+            # 1️⃣ Buat orders (header) → default produk_id = 1, quantity = total_quantity
             res_order = supabase.table("orders").insert({
                 "user_id": user_id,
-                "produk_id": first_item["produk_id"] if first_item else None,
-                "quantity": first_item["quantity"] if first_item else 0,
+                "produk_id": 1,  # default
+                "quantity": total_quantity,
                 "status": "Pending",
                 "payment_method": payment_method,
                 "tanggal": datetime.utcnow().isoformat()
@@ -726,7 +736,7 @@ def checkout_cart():
                     "status": "Pending"
                 }).execute()
 
-            # 3️⃣ Buat shipping (pakai address_id + ongkir flat)
+            # 3️⃣ Buat shipping
             supabase.table("shipping").insert({
                 "order_id": order_id,
                 "address_id": int(address_id),
@@ -739,7 +749,7 @@ def checkout_cart():
             supabase.table("cart").delete().eq("user_id", user_id).execute()
 
             flash(f"Pesanan berhasil dibuat dengan metode pembayaran: {payment_method}", "success")
-            return redirect(url_for("payment", order_id=order_id))   # ⬅️ kirim order_id
+            return redirect(url_for("payment", order_id=order_id))
 
     # === Render Template (GET atau fallback POST) ===
     return render_template(
@@ -770,8 +780,19 @@ def payment():
             return redirect(url_for("cart"))
 
         # 🔹 Buat order baru
+        if carts:
+            # ambil produk_id pertama sebagai default
+            first_product_id = carts[0]["produk_id"]
+            # hitung total quantity semua item di cart
+            total_quantity = sum(int(c.get("quantity") or 0) for c in carts)
+        else:
+            first_product_id = 1  # fallback default
+            total_quantity = 0
+
         order_data = {
             "user_id": user_id,
+            "produk_id": first_product_id,
+            "quantity": total_quantity,
             "status": "Pending",
             "payment_method": "Midtrans",
             "tanggal": datetime.now().isoformat()
